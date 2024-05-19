@@ -1,34 +1,35 @@
 "use client"
 
+import { RegisterSchema } from "@/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { CardWrapper } from "./card-wrapper";
 import { Routers } from "@/enum/routers";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { LoginSchema } from "@/schemas";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { login } from "@/actions/login";
+import { Button } from "../ui/button";
+import { z } from "zod";
+import { register } from "@/actions/register";
 
-const LoginForm: FC = () => {
+const RegisterForm: FC = () => {
   const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
-  const form = useForm<z.infer<typeof LoginSchema>>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof LoginSchema>) {
+  function onSubmit(values: z.infer<typeof RegisterSchema>) {
     startTransition(() => {
-      login(values)
+      register(values)
       .then((res) => {
         if (!!res.success){
           setError(undefined);
@@ -48,9 +49,9 @@ const LoginForm: FC = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account?"
-      backButtonHref={Routers.Register}
+      headerLabel="Create an account"
+      backButtonLabel="Already have an account?"
+      backButtonHref={Routers.Login}
       showSocial
     >
       <Form {...form}>
@@ -61,6 +62,24 @@ const LoginForm: FC = () => {
           <div
             className="space-y-4"
           >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="text"
+                      placeholder="Name" 
+                      disabled={isPending}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -109,7 +128,7 @@ const LoginForm: FC = () => {
             disabled={isPending}
             className="w-full"
           >
-            Login
+            Create an account
           </Button>
         </form>
       </Form>
@@ -117,4 +136,4 @@ const LoginForm: FC = () => {
   )
 }
 
-export { LoginForm }
+export { RegisterForm }
