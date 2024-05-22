@@ -29,4 +29,4 @@ const getUserById = async (id: string): Promise<User | null> => {
   }
 }
 
-export { getUserByEmail }
+export { getUserByEmail, getUserById }
