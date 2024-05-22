@@ -5,7 +5,8 @@ import Credentials from "next-auth/providers/credentials"
 import { ZodError, z } from "zod"
 import { LoginSchema } from "./schemas"
 import { compare } from "bcryptjs"
-import { getUserByEmail } from "./services/user"
+import { getUserByEmail, getUserById } from "./services/user"
+import { UserRole } from "@prisma/client"
 
 export default { 
   providers: [
@@ -39,4 +40,30 @@ export default {
     GitHub, 
     Google,
   ],
+  callbacks: {
+    // async signIn({ user }) {
+    //   if (!user || !user.emailVerified) return false;
+
+    //   return true
+    // },
+    // async redirect({ url, baseUrl }) {
+    //   return baseUrl
+    // },
+    async session({ session, token }) {
+      if (!!token.sub && !!session.user) session.user.id = token.sub;
+      if (!!token.role && !!session.user) session.user.role = token.role as UserRole;
+
+      return session
+    },
+    async jwt({ token }) {
+      if (!token.sub) return token;
+
+      const existingUser = await getUserById(token.sub);
+      if (!existingUser) return token;
+
+      token.role = existingUser.role;
+
+      return token
+    }
+  }
 } satisfies NextAuthConfig
