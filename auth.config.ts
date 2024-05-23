@@ -1,5 +1,5 @@
-import GitHub from "next-auth/providers/github"
-import Google from "next-auth/providers/google"
+import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { ZodError, z } from "zod"
@@ -7,10 +7,21 @@ import { LoginSchema } from "./schemas"
 import { compare } from "bcryptjs"
 import { getUserByEmail, getUserById } from "./services/user"
 import { UserRole } from "@prisma/client"
+import prisma from "./lib/db";
+import { Routers } from "./enum/routers";
 
 export default { 
   providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    }),
     Credentials({
+      name: "credentials",
       credentials: {
         email: {},
         password: {},
@@ -37,17 +48,28 @@ export default {
         }
       },
     }),
-    GitHub, 
-    Google,
   ],
+  pages: {
+    signIn: Routers.Login,
+    error: Routers.Error,
+  },
+  events: {
+    async linkAccount ({ user }) {
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          emailVerified: new Date(),
+        }
+      })
+    }
+  },
   callbacks: {
-    // async signIn({ user }) {
+    // async signIn({ user, account, profile, email, credentials }) {
     //   if (!user || !user.emailVerified) return false;
 
     //   return true
-    // },
-    // async redirect({ url, baseUrl }) {
-    //   return baseUrl
     // },
     async session({ session, token }) {
       if (!!token.sub && !!session.user) session.user.id = token.sub;

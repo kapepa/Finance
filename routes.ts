@@ -7,6 +7,7 @@ const publicRouters: Routers[] = [
 
 const authRouters: Routers[] = [
   Routers.Login,
+  Routers.Error,
   Routers.Register,
 ]
 
