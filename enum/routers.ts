@@ -2,8 +2,10 @@ export enum Routers {
   Home = "/",
   Login = "/login",
   Error = "/error",
+  Reset = "/reset",
+  ApiAuth = "/api/auth",
   Register = "/register",
   Settings = "/settings",
-  ApiAuth = "/api/auth",
-  NewVerification = "/new-verification"
+  NewPassword = "/new-password",
+  NewVerification = "/new-verification",
 }
