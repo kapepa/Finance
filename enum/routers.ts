@@ -5,4 +5,5 @@ export enum Routers {
   Register = "/register",
   Settings = "/settings",
   ApiAuth = "/api/auth",
+  NewVerification = "/new-verification"
 }

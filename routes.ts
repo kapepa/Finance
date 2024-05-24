@@ -9,6 +9,7 @@ const authRouters: Routers[] = [
   Routers.Login,
   Routers.Error,
   Routers.Register,
+  Routers.NewVerification,
 ]
 
 const apiAuthPrefix = Routers.ApiAuth;
