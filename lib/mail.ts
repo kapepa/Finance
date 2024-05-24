@@ -20,4 +20,17 @@ const sendVerificationEmail = async ({ email, token }: SendVerificationEmailType
   });
 }
 
-export { sendVerificationEmail }
+const sendPasswordResetToken = async ({ email, token }: SendVerificationEmailTypes) => {
+  const headersList = headers();
+  const domain = headersList.get('host') || "";
+  const confirmLink = `http://${domain}${Routers.NewPassword}?token=${token}`
+
+  await resend.emails.send({
+    from: 'Acme <onboarding@resend.dev>',
+    to: email!,
+    subject: 'Reset your password',
+    html: `<p>Click <a href='${confirmLink}'>here</a> to reset password</p>`
+  });
+}
+
+export { sendVerificationEmail, sendPasswordResetToken }

@@ -1,40 +1,41 @@
 "use client"
 
+import { ResetPasswordSchema } from "@/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { CardWrapper } from "./card-wrapper";
 import { Routers } from "@/enum/routers";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { LoginSchema } from "@/schemas";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
-import { login } from "@/actions/login";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { newPassword } from "@/actions/new-password";
 
-const LoginForm: FC = () => {
-  const searchParams = useSearchParams();
+interface NewPasswordFormProps {
+  token: string,
+}
+
+const NewPasswordForm: FC<NewPasswordFormProps> = (props) => {
+  const { token } = props;
   const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
-  const form = useForm<z.infer<typeof LoginSchema>>({
-    resolver: zodResolver(LoginSchema),
+  const form = useForm<z.infer<typeof ResetPasswordSchema>>({
+    resolver: zodResolver(ResetPasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
+      confirm: "",
     },
   })
-  const urlError = searchParams.get("error") === "OAuthAccountNotLinked" 
-    ? "Email already is use with different providers"
-    : ""
 
-  function onSubmit(values: z.infer<typeof LoginSchema>) {
+  function onSubmit(values: z.infer<typeof ResetPasswordSchema>) {
+    if (!token) return setError("Tokin is not existing")
+
     startTransition(() => {
-      login(values)
+      newPassword({ token, values })
       .then((res) => {
         if (!!res.success){
           setError(undefined);
@@ -54,10 +55,9 @@ const LoginForm: FC = () => {
 
   return (
     <CardWrapper
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account?"
-      backButtonHref={Routers.Register}
-      showSocial
+      headerLabel="Enter a new password"
+      backButtonLabel="Back to login"
+      backButtonHref={Routers.Login}
     >
       <Form {...form}>
         <form 
@@ -67,24 +67,6 @@ const LoginForm: FC = () => {
           <div
             className="space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="email"
-                      placeholder="my@example.com"
-                      disabled={isPending}
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="password"
@@ -103,21 +85,27 @@ const LoginForm: FC = () => {
                 </FormItem>
               )}
             />
-            <Button
-              size="sm"
-              variant="link"
-              asChild
-              className="px-0 font-normal"
-            >
-              <Link
-                href={Routers.Reset}
-              >
-                Forgot password
-              </Link>
-            </Button>
+            <FormField
+              control={form.control}
+              name="confirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm password</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="password"
+                      placeholder="******" 
+                      disabled={isPending}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <FormError
-            message={error || urlError}
+            message={error}
           />
           <FormSuccess
             message={success}
@@ -127,7 +115,7 @@ const LoginForm: FC = () => {
             disabled={isPending}
             className="w-full"
           >
-            Login
+            Set new password
           </Button>
         </form>
       </Form>
@@ -135,4 +123,4 @@ const LoginForm: FC = () => {
   )
 }
 
-export { LoginForm }
+export { NewPasswordForm }

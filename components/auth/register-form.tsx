@@ -24,6 +24,7 @@ const RegisterForm: FC = () => {
       name: "",
       email: "",
       password: "",
+      confirm: "",
     },
   })
 
@@ -104,6 +105,24 @@ const RegisterForm: FC = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="password"
+                      placeholder="******" 
+                      disabled={isPending}
+                      {...field} 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="confirm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm password</FormLabel>
                   <FormControl>
                     <Input 
                       type="password"

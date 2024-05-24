@@ -8,7 +8,9 @@ const publicRouters: Routers[] = [
 const authRouters: Routers[] = [
   Routers.Login,
   Routers.Error,
+  Routers.Reset,
   Routers.Register,
+  Routers.NewPassword,
   Routers.NewVerification,
 ]
 
