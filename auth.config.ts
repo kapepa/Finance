@@ -9,6 +9,7 @@ import { getUserByEmail, getUserById } from "./services/user"
 import { UserRole } from "@prisma/client"
 import prisma from "./lib/db";
 import { Routers } from "./enum/routers";
+import { deleteTwoFactorConfirmationById, getTwoFactorConfirmationByUserId } from "./services/two-factor-confirmation";
 
 export default { 
   providers: [
@@ -26,7 +27,7 @@ export default {
         email: {},
         password: {},
       },
-      async authorize(credentials: Partial<Record<"email" | "password", unknown>>, request: Request) {
+      async authorize(credentials: Partial<Record<"email" | "password" | "code", unknown>>, request: Request) {
         try {
           const result = LoginSchema.safeParse(credentials);
 
@@ -68,7 +69,14 @@ export default {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider !== 'credentials') return true;
-      if (!user || !user.emailVerified) return false;
+      if (!user || !user.emailVerified || !user.id) return false;
+
+      if (user.isTwoFactorEnabled) {
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(user.id);
+        if (!twoFactorConfirmation) return false;
+
+        await deleteTwoFactorConfirmationById(twoFactorConfirmation.id);
+      }
 
       return true
     },

@@ -33,14 +33,16 @@ model Account {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  password      String?
-  role          UserRole  @default(USER)
-  accounts      Account[]
+  id                    String                  @id @default(cuid())
+  name                  String?
+  email                 String?                 @unique
+  emailVerified         DateTime?               @map("email_verified")
+  image                 String?
+  password              String?
+  role                  UserRole                @default(USER)
+  accounts              Account[]
+  isTwoFactorEnabled    Boolean                 @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?  @relation("TwoFactorConfirmationToUser")
  
   @@map("users")
 }
@@ -63,4 +65,22 @@ model PasswordResetToken {
  
   @@unique([email, token])
   @@map("passwordresettoken")
+}
+
+model TwoFactorToken {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  token         String    @unique
+  expires       DateTime
+ 
+  @@unique([email, token])
+  @@map("twofactortoken")
+} 
+
+model TwoFactorConfirmation {
+  id              String    @id @default(cuid())
+  userId String?  @unique
+  user   User?    @relation("TwoFactorConfirmationToUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("twofactorconfirmation")
 }

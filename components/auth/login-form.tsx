@@ -18,6 +18,7 @@ import Link from "next/link";
 
 const LoginForm: FC = () => {
   const searchParams = useSearchParams();
+  const [code, setCode] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const [isPending, startTransition] = useTransition();
@@ -26,6 +27,7 @@ const LoginForm: FC = () => {
     defaultValues: {
       email: "",
       password: "",
+      code: "",
     },
   })
   const urlError = searchParams.get("error") === "OAuthAccountNotLinked" 
@@ -36,11 +38,16 @@ const LoginForm: FC = () => {
     startTransition(() => {
       login(values)
       .then((res) => {
+        if (res.isTwoFactor) {
+          setCode(true)
+        }
         if (!!res.success){
+          form.reset()
           setError(undefined);
           setSuccess(res.success);
         };
         if (!!res.error) {
+          form.reset()
           setSuccess(undefined);
           setError(res.error);
         }
@@ -67,42 +74,70 @@ const LoginForm: FC = () => {
           <div
             className="space-y-4"
           >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="email"
-                      placeholder="my@example.com"
-                      disabled={isPending}
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="password"
-                      placeholder="******" 
-                      disabled={isPending}
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {
+              !code && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="email"
+                            placeholder="my@example.com"
+                            disabled={isPending}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="password"
+                            placeholder="******" 
+                            disabled={isPending}
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )
+            }
+            {
+              code && (
+                <FormField
+                  control={form.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Code</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="text"
+                          placeholder="123456" 
+                          disabled={isPending}
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )
+            }
             <Button
               size="sm"
               variant="link"
@@ -127,7 +162,7 @@ const LoginForm: FC = () => {
             disabled={isPending}
             className="w-full"
           >
-            Login
+            { code ? "Confirm" : "Login" }
           </Button>
         </form>
       </Form>

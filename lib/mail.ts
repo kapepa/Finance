@@ -1,11 +1,13 @@
 import { Routers } from '@/enum/routers';
-import { VerificationToken } from '@prisma/client';
+import { PasswordResetToken, TwoFactorToken, VerificationToken } from '@prisma/client';
 import { Resend } from 'resend';
 import { headers } from 'next/headers';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 type SendVerificationEmailTypes = Pick<VerificationToken, "email" | "token">
+type SendPasswordResetTokenTypes = Pick<PasswordResetToken, "email" | "token">
+type SendTwoFactorTokenEmailTypes = Pick<TwoFactorToken, "email" | "token">
 
 const sendVerificationEmail = async ({ email, token }: SendVerificationEmailTypes) => {
   const headersList = headers();
@@ -20,7 +22,7 @@ const sendVerificationEmail = async ({ email, token }: SendVerificationEmailType
   });
 }
 
-const sendPasswordResetToken = async ({ email, token }: SendVerificationEmailTypes) => {
+const sendPasswordResetToken = async ({ email, token }: SendPasswordResetTokenTypes) => {
   const headersList = headers();
   const domain = headersList.get('host') || "";
   const confirmLink = `http://${domain}${Routers.NewPassword}?token=${token}`
@@ -33,4 +35,13 @@ const sendPasswordResetToken = async ({ email, token }: SendVerificationEmailTyp
   });
 }
 
-export { sendVerificationEmail, sendPasswordResetToken }
+const sendTwoFactorTokenEmail = async ({ email, token }: SendTwoFactorTokenEmailTypes) => {
+  await resend.emails.send({
+    from: 'Acme <onboarding@resend.dev>',
+    to: email!,
+    subject: '2FA code',
+    html: `<p>Your 2FA code: ${token}</p>`
+  });
+}
+
+export { sendVerificationEmail, sendPasswordResetToken, sendTwoFactorTokenEmail }
