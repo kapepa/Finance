@@ -1,18 +1,17 @@
-import { auth, signOut } from "@/auth";
+"use client"
+
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { NextPage } from "next";
 
-const SettingsPage: NextPage = async () => {
-  const session = await auth();
+const SettingsPage: NextPage = () => {
+  const user = useCurrentUser();
+
 
   return (
-    <div>
-      {JSON.stringify(session)}
-      <form action={async () => {
-        "use server"
-        await signOut()
-      }}>
-        <button>Sign out</button>
-      </form>
+    <div
+      className="bg-white p-10 rounded-xl"
+    >
+      ettingsPage
     </div>
   )
 }
