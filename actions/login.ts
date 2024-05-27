@@ -26,10 +26,11 @@ const login = async (values: z.infer<typeof LoginSchema>) => {
 
     return { success: "Confirmation email sent" }
   }
-  
+
   if (existingUser.isTwoFactorEnabled) {
     if (code) {
       const twoFactorToken = await getTwoFactorTokenByEmail(email);
+      
       if (!twoFactorToken || twoFactorToken?.token !== code) return { error: "Invalid code" };
       
       const hasExpired = new Date(twoFactorToken.expires) < new Date();
@@ -45,7 +46,6 @@ const login = async (values: z.infer<typeof LoginSchema>) => {
           userId: existingUser.id
         }
       })
-
     } else {
       const twoFactorToken = await generateTwoFactorToken(email);
       await sendTwoFactorTokenEmail({

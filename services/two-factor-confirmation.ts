@@ -17,7 +17,7 @@ const getTwoFactorConfirmationByUserId = async (userId: string): Promise<TwoFact
 
 const deleteTwoFactorConfirmationById = async (id: string): Promise<TwoFactorConfirmation | null> => {
   try {
-    const twoFactorConfirmation = await prisma.twoFactorConfirmation.findUnique({
+    const twoFactorConfirmation = await prisma.twoFactorConfirmation.delete({
       where: {
         id
       }

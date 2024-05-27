@@ -71,7 +71,7 @@ export default {
       if (account?.provider !== 'credentials') return true;
       if (!user || !user.emailVerified || !user.id) return false;
 
-      if (user.isTwoFactorEnabled) {
+      if (!!user.isTwoFactorEnabled) {
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(user.id);
         if (!twoFactorConfirmation) return false;
 
