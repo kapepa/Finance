@@ -18,7 +18,7 @@ const Navbar: FC = () => {
         className="flex gap-x-2"
       >
         <Button
-          variant={pathname === Routers.Server ? "default" : "link"}
+          variant={pathname === Routers.Server ? "default" : "outline"}
           asChild
         >
           <Link
@@ -28,7 +28,7 @@ const Navbar: FC = () => {
           </Link>
         </Button>
         <Button
-          variant={pathname === Routers.Client ? "default" : "link"}
+          variant={pathname === Routers.Client ? "default" : "outline"}
           asChild
         >
           <Link
@@ -38,7 +38,7 @@ const Navbar: FC = () => {
           </Link>
         </Button>  
         <Button
-          variant={pathname === Routers.Admin ? "default" : "link"}
+          variant={pathname === Routers.Admin ? "default" : "outline"}
           asChild
         >
           <Link
@@ -48,7 +48,7 @@ const Navbar: FC = () => {
           </Link>
         </Button>      
         <Button
-          variant={pathname === Routers.Settings ? "default" : "link"}
+          variant={pathname === Routers.Settings ? "default" : "outline"}
           asChild
         >
           <Link

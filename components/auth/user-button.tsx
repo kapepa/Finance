@@ -11,8 +11,6 @@ import { LogOut } from "lucide-react";
 const UserButton: FC = () => {
   const user = useCurrentUser();
 
-  console.log(user?.image)
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -31,14 +29,14 @@ const UserButton: FC = () => {
         align="end"
         className="w-40"
       >
-        <LogoutButton>
-          <DropdownMenuItem>
+        <DropdownMenuItem>
+          <LogoutButton>
             <LogOut 
               className="h-4 w-4 mr-2"
             />
             Logout
-          </DropdownMenuItem>
-        </LogoutButton>
+          </LogoutButton>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

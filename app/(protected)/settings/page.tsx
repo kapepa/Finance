@@ -6,12 +6,11 @@ import { NextPage } from "next";
 const SettingsPage: NextPage = () => {
   const user = useCurrentUser();
 
-
   return (
     <div
       className="bg-white p-10 rounded-xl"
     >
-      ettingsPage
+      SettingsPage
     </div>
   )
 }

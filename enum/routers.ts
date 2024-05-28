@@ -7,6 +7,7 @@ export enum Routers {
   Client = "/client",
   Server = "/server",
   ApiAuth = "/api/auth",
+  ApiAdmin = "/api/admin",
   Register = "/register",
   Settings = "/settings",
   NewPassword = "/new-password",
