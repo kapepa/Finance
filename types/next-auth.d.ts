@@ -3,11 +3,14 @@ import { UserRole } from "@prisma/client";
 import NextAuth, { DefaultSession } from "next-auth"
 import { z } from "zod";
 
+export type UserAuth = {
+  role: UserRole
+  isTwoFactorEnabled: boolean
+} & DefaultSession["user"]
+
 declare module "next-auth" {
   interface Session {
-    user: {
-      role: UserRole
-    } & DefaultSession["user"]
+    user: UserAuth & DefaultSession["user"]
   }
   interface User extends DefaultUser  {
     id: string

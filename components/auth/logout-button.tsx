@@ -1,7 +1,6 @@
 "use client"
 
 import { FC, ReactNode } from "react"
-import { Button } from "../ui/button"
 import { signOut } from "next-auth/react"
 
 interface LogoutButtonProps {
@@ -9,14 +8,14 @@ interface LogoutButtonProps {
 }
 
 const LogoutButton: FC<LogoutButtonProps> = (props) => {
-  const { children } = props;
+  const { children,  } = props;
 
   const onLogout = () => signOut();
 
   return (
     <span
       onClick={onLogout}
-      className="cursor-pointer"
+      className="cursor-pointer flex items-center"
     >
       { children }
     </span>
