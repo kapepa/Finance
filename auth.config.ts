@@ -10,6 +10,7 @@ import { UserRole } from "@prisma/client"
 import prisma from "./lib/db";
 import { Routers } from "./enum/routers";
 import { deleteTwoFactorConfirmationById, getTwoFactorConfirmationByUserId } from "./services/two-factor-confirmation";
+import { getAccountByUserId } from "./services/account";
 
 export default { 
   providers: [
@@ -83,7 +84,10 @@ export default {
     async session({ session, token }) {
       if (!!token.sub && !!session.user) session.user.id = token.sub;
       if (!!token.role && !!session.user) session.user.role = token.role as UserRole;
-      if (!!session.user) session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean
+      if (!!session.user) session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+      if (!!session.user && !!token.name) session.user.name = token.name;
+      if (!!session.user && !!token.email) session.user.email = token.email;
+      if (!!session.user) session.user.isOAuth = token.isOAuth as boolean || false ;
 
       return session
     },
@@ -93,10 +97,15 @@ export default {
       const existingUser = await getUserById(token.sub);
       if (!existingUser) return token;
 
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.isOAuth = !!existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token
-    }
+    },
   }
 } satisfies NextAuthConfig

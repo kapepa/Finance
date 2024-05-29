@@ -6,6 +6,7 @@ import { z } from "zod";
 export type UserAuth = {
   role: UserRole
   isTwoFactorEnabled: boolean
+  isOAuth: boolean
 } & DefaultSession["user"]
 
 declare module "next-auth" {
@@ -16,5 +17,6 @@ declare module "next-auth" {
     id: string
     emailVerified: Date
     isTwoFactorEnabled: boolean
+    isOAuth: boolean
   }
 }
