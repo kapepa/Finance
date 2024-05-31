@@ -59,7 +59,7 @@ const SettingsPage: NextPage = () => {
         setError("Something went wrong!");
       })
     })
-  }
+  };
 
   return (
     <Card
