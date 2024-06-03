@@ -24,7 +24,7 @@ const SettingsPage: NextPage = () => {
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const { update, data } = useSession();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
